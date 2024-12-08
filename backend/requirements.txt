@@ -1,8 +1,0 @@
-fastapi
-uvicorn
-fastapi-socketio
-pymongo
-pydantic
-python-jose[cryptography]
-google-api-python-client
-google-auth-oauthlib
