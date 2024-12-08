@@ -2,19 +2,22 @@ from pydantic import BaseModel
 from typing import Optional, List
 import uuid
 
+
 # Conversation Model
 class Conversation(BaseModel):
     id: Optional[str]
     query: str
-    Context: str
+    context: str
     response: str
-    def __init__(self, query, Context, response):
+
+    def __init__(self, query, context, response):
         self.id = str(uuid.uuid4())
         self.query = query
-        self.Context = Context
+        self.context = context
         self.response = response
+
     def get_query(self):
-            return self.query
+        return self.query
 
     def get_context(self):
         return self.Context
@@ -43,20 +46,20 @@ class Persona(BaseModel):
     name: str
     background: str
 
+
 # Preferences Model
 class Preferences(BaseModel):
     userId: str
     name: str
-    language: str
-    fontSize": Optional[str] = "medium",
-    fontFamily":  Optional[str] = "sans-serif",
-    chatHistoryLength":  Optional[str] = 100,
-    autoScroll": True,
-    showTimestamps": True,
+    fontSize: Optional[str] = "medium"
+    fontFamily: Optional[str] = "sans-serif"
+    chatHistoryLength: Optional[str] = 100
+    autoScroll: Optional[bool] = True
+    showTimestamps: Optional[bool] = True
     theme: Optional[str] = "dark"
     avatar: Optional[str] = "default"
     language: Optional[str] = "en"
     notificationSound: Optional[bool] = True
-    showAvatars":  Optional[bool] = True
-    customKeywords":  Optional[List] = ["keyword1", "keyword2"],
-    preferredLLMs":  Optional[List = ["gemini", "LAMA"]
+    showAvatars: Optional[bool] = True
+    customKeywords: List = ["keyword1", "keyword2"],
+    preferredLLMs: List = ["openai", "gemini", "LAMA"]

@@ -1,0 +1,17 @@
+
+{
+  "google": {
+     "GEMINI_API_KEY": "AIzaSyCZ6e-nfnZHktqxqDVRBmwf-C9DwMB-vJY",
+     "GOOGLE_APPLICATION_CREDENTIALS": "resources\\gen-lang-client-0922515850.json",
+     "GEMINI_MODEL": "gemini-1.5-flash-002"
+  } ,
+
+  "database": {
+    "type": "mongodb",
+    "host": "clusterpk.nwora.mongodb.net",
+    "user": "jaknap",
+    "password": "HeB2Vad9TW2czRe1",
+    "database": "ragchatdb",
+    "uri": "mongodb+srv://jaknap:HeB2Vad9TW2czRe1@clusterpk.nwora.mongodb.net/ragchatdb?retryWrites=true&w=majority&appName=Clusterpk"
+  }
+}
