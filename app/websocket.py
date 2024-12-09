@@ -4,11 +4,13 @@ from starlette.websockets import WebSocketDisconnect
 
 from RAG.query import run_query_with_rag_and_then_with_gemini
 from app.database import db_connect, client
+import asyncio
 
+from app.socket_connection_manager import SocketConnectionManager
 router = APIRouter()
 
-
 speech_client = speech.SpeechClient()
+socket_connection_manager = SocketConnectionManager()
 
 
 @router.websocket("/ws")
@@ -17,8 +19,14 @@ async def websocket_endpoint(websocket: WebSocket):
     db_connect()  # Initialize database connection
     try:
         while True:
-            data = await websocket.receive_text()
-
+            # WebSocketDisconnect is not raised unless we poll
+            # https://github.com/tiangolo/fastapi/issues/3008
+            try:
+                data = await asyncio.wait_for( websocket.receive_text(), 0.1)
+                await socket_connection_manager.received_message(
+                    socket=websocket, message=data)
+            except asyncio.TimeoutError:
+                pass
             if data.startswith("audio-query:"):
                 audio_base64 = data[len("audio-query:"):]
                 transcript = transcribe_audio(audio_base64)
