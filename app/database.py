@@ -63,7 +63,6 @@ def load_env():
 
     with open(config_file_path, "r") as f:
         config = json.load(f)
-        print(config)
         os.environ['GEMINI_API_KEY'] = config["google"]['GEMINI_API_KEY']
         os.environ['GEMINI_MODEL'] = config["google"]['GEMINI_MODEL']
         config_file_path = os.path.join(os.path.dirname(__file__), config['google']['GOOGLE_APPLICATION_CREDENTIALS'])

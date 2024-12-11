@@ -49,6 +49,7 @@ class Persona(BaseModel):
 
 # Preferences Model
 class Preferences(BaseModel):
+    id: Optional[str]
     userId: str
     name: str
     fontSize: Optional[str] = "medium"
@@ -56,10 +57,12 @@ class Preferences(BaseModel):
     chatHistoryLength: Optional[str] = 100
     autoScroll: Optional[bool] = True
     showTimestamps: Optional[bool] = True
+    imageUploadEnabled: Optional[bool] = True
+    archiveEnabled: Optional[bool] = True
     theme: Optional[str] = "dark"
     avatar: Optional[str] = "default"
     language: Optional[str] = "en"
     notificationSound: Optional[bool] = True
     showAvatars: Optional[bool] = True
-    customKeywords: List = ["keyword1", "keyword2"],
-    preferredLLMs: List = ["openai", "gemini", "LAMA"]
+    customKeywords: Optional[List] = ["keyword1", "keyword2"],
+    preferredLLMs: Optional[List] = ["openai", "gemini", "LAMA"]

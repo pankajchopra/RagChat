@@ -127,7 +127,7 @@ def perform_rag_with_gemini(query, context):
     #     "type": "rag",
     #     "filetype": "pdf"
     # }
-    # }
+    #
     # if is_valid_dict_string(payload):
     #     # Generate response
     #     # response = _geminiModel.generate_content(query+"\n"+"\n".join(context))
@@ -166,7 +166,7 @@ def run_query_simulation_with_gemini(indexPath, textData_path, geminiModel):
 
     # Perform RAG with Gemini Pro
     print("\nGenerating response with Gemini Pro for query and RAG context...")
-    gemini_response = perform_rag_with_gemini(query, top_chunks, geminiModel)
+    gemini_response = perform_rag_with_gemini(query, top_chunks)
 
     print("\nGemini Pro Response:")
     print(gemini_response)

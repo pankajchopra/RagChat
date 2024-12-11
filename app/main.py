@@ -1,33 +1,17 @@
 from fastapi import FastAPI, APIRouter
-from contextlib import asynccontextmanager
-from app.conversations import router as conversations_router
-from app.personas import router as personas_router
-from app.preferences import router as preferences_router
-from app.websocket import router as endpoint_router
+from fastapi.openapi.utils import get_openapi
+from app.routers import personas,preferences,conversations
+from app import websocket
 from fastapi_socketio import SocketManager
 # from app.auth import oauth2_scheme
-from app.database import db_connect, client, load_env
+from app.database import load_env
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 api_router = APIRouter()
 # load environment variables
 load_env()
-app = FastAPI(    title="My FastAPI App",
-    description="This is my FastAPI app",
-    version="1.0.0",
-    openapi_url="/openapi.json",
-    openapi_tags=[
-        {"name": "Conversations", "description": "Conversations-related endpoints"},
-        {"name": "Personas", "description": "personas-related endpoints"},
-        {"name": "Preferences", "description": "Preferences-related endpoints"}
-    ],
-    openapi_prefix="/api",
-    openapi_info={
-        "contact": {"name": "Pankaj Kumar", "email": "pkchopra@gmail.com"},
-        "license": {"name": "MIT"}
-    }
-                  )
+app = FastAPI()
 
 # CORS middleware for frontend-backend communication
 app.add_middleware(
@@ -39,13 +23,36 @@ app.add_middleware(
 )
 
 # Include routers
-api_router.include_router(conversations_router,prefix="/conversations", tags=["conversations"])
-api_router.include_router(personas_router, prefix="/personas", tags=["personas"])
-api_router.include_router(preferences_router, prefix="/preferences", tags=["preferences"])
-api_router.include_router(endpoint_router)
+# api_router.include_router(conversations_router, tags=["conversations"])
+# api_router.include_router(personas_router, tags=["personas"])
+# api_router.include_router(preferences_router)
+# api_router.include_router(endpoint_router)
+app.include_router(conversations.router, tags=["conversations"])
+app.include_router(personas.router, tags=["personas"])
+app.include_router(preferences.router)
+app.include_router(websocket.router)
 # Include routers for modularity
 # app.include_router(oauth2_scheme)
 
+api_router.include_router(conversations.router)
+api_router.include_router(personas.router)
+api_router.include_router(preferences.router)
+app.include_router(websocket.router)
+
+openapi_schema = get_openapi(
+    title="My FastAPI App",
+    description="This is my FastAPI app",
+    version="1.0.0",
+    openapi_version="3.0.2",
+    contact={
+        "name": "Pankaj Kumar",
+        "email": "pkchop@gmail.com",
+        "url": "https://www.yourwebsite.com",
+    },
+    routes=api_router.routes
+)
+
+app.openapi_schema = openapi_schema
 # WebSocket manager
 socket_manager = SocketManager(app)
 
@@ -55,17 +62,17 @@ socket_manager = SocketManager(app)
 #     print("App started")
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Startup logic
-    db_connect()  # Initialize database connection
-    print("App started")
-
-    yield
-
-    # Shutdown logic
-    client.close()
-    print("App shutdown")
+# @asynccontextmanager
+# async def lifespan(FastAPI):
+#     # Startup logic
+#     db_connect()  # Initialize database connection
+#     print("App started")
+#
+#     yield
+#
+#     # Shutdown logic
+#     client.close()
+#     print("App shutdown")
 
 
 # async def shutdown_event():
@@ -75,4 +82,4 @@ async def lifespan(app: FastAPI):
 
 if __name__ == "__main__":
 
-    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="debug",log_config=None)
+    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="debug", log_config=None)

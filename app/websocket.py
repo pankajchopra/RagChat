@@ -2,7 +2,7 @@ from fastapi import APIRouter, WebSocket
 from google.cloud import speech
 from starlette.websockets import WebSocketDisconnect
 
-from RAG.query import run_query_with_rag_and_then_with_gemini
+from app.RAG.query import run_query_with_rag_and_then_with_gemini
 from app.database import db_connect, client
 import asyncio
 
