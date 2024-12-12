@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional, List, Dict
 import uuid
 
 
@@ -42,19 +42,28 @@ class GeminiResponse:
 
 # Persona Model
 class Persona(BaseModel):
-    id: Optional[str]
+    id: str
     name: str
     background: str
+    key_attributes: Dict[str, Dict[str, str]]
+    interaction_examples: List[Dict[str, str]]
+
+    def __init__(self, _id: str, name: str, background: str, key_attributes: Dict[str, Dict[str, str]], interaction_examples: List[Dict[str, str]]):
+        self.id = _id
+        self.name = name
+        self.background = background
+        self.key_attributes = key_attributes
+        self.interaction_examples = interaction_examples
 
 
 # Preferences Model
 class Preferences(BaseModel):
-    id: Optional[str]
+    id: str = None
     userId: str
     name: str
     fontSize: Optional[str] = "medium"
     fontFamily: Optional[str] = "sans-serif"
-    chatHistoryLength: Optional[str] = 100
+    chatHistoryLength: Optional[str] = "100"
     autoScroll: Optional[bool] = True
     showTimestamps: Optional[bool] = True
     imageUploadEnabled: Optional[bool] = True
@@ -64,5 +73,5 @@ class Preferences(BaseModel):
     language: Optional[str] = "en"
     notificationSound: Optional[bool] = True
     showAvatars: Optional[bool] = True
-    customKeywords: Optional[List] = ["keyword1", "keyword2"],
-    preferredLLMs: Optional[List] = ["openai", "gemini", "LAMA"]
+    customKeywords: Optional[tuple] = ["keyword1", "keyword2"],
+    preferredLLMs: Optional[tuple] = ["openai", "gemini", "LAMA"]

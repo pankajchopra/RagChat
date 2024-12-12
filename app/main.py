@@ -1,4 +1,7 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, Request, HTTPException, status
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
 from fastapi.openapi.utils import get_openapi
 from app.routers import personas,preferences,conversations
 from app import websocket
@@ -7,6 +10,10 @@ from fastapi_socketio import SocketManager
 from app.database import load_env
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 api_router = APIRouter()
 # load environment variables
@@ -79,6 +86,13 @@ socket_manager = SocketManager(app)
 #     # Your shutdown code here
 #     print("App shut down")
 
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    error_msg = jsonable_encoder({"detail": exc.errors(), "body": exc.body})
+    logger.error("Validation error: %s", error_msg)
+    return JSONResponse(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                        content=error_msg)
 
 if __name__ == "__main__":
 
