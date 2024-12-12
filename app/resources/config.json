@@ -1,7 +1,7 @@
 
 {
   "google": {
-     "GEMINI_API_KEY": "AIzaSyCZ6e-nfnZHktqxqDVRBmwf-C9DwMB-vJY",
+     "GEMINI_API_KEY": "AIzaSyCZ6e-nfnZHktqxqDVRBmwf-C9DwMB-vJYPKC",
      "GOOGLE_APPLICATION_CREDENTIALS": "resources\\gen-lang-client-0922515850.json",
      "GEMINI_MODEL": "gemini-1.5-flash-002"
   } ,

@@ -15,9 +15,9 @@ from utils import clean_text
 
 # Load Universal Sentence Encoder (USE)
 embed = hub.load("https://tfhub.dev/google/universal-sentence-encoder/4")
+
+
 # "https://ai.google.dev/gemini-api/docs/system-instructions?lang=python"
-
-
 
 
 # Function to extract text from a website
@@ -46,9 +46,8 @@ def chunk_section_wise_text(structured_resume6):
     return chunks
 
 
-
 # Sentence based Chunking Function
-def chunk_senetence_based_text(text, max_length=512):
+def chunk_sentence_based_text(text, max_length=512):
     sentences = nltk.sent_tokenize(text)
     return sentences
 
@@ -76,10 +75,10 @@ def hybrid_chunking(text, max_tokens_per_chunk):
     return chunks
 
 
-def vectorize_and_save(text_data, index_path,  chunk_data_path="chunks.txt"):
-    # chunks = chunk_senetence_based_text(text_data, max_length=256)
+def vectorize_and_save(_text_data, _index_path, chunk_data_path="chunks.txt"):
+    # chunks = chunk_sentence_based_text(text_data, max_length=256)
     # chunks = hybrid_chunking(text_data, max_tokens_per_chunk=1024)
-    chunks = chunk_section_wise_text(text_data)
+    chunks = chunk_section_wise_text(_text_data)
 
     # Save chunks to a file
     with open(chunk_data_path, 'w', encoding='utf-8') as f:
@@ -90,15 +89,16 @@ def vectorize_and_save(text_data, index_path,  chunk_data_path="chunks.txt"):
     vectors = vectors.numpy()  # Convert to NumPy for FAISS
 
     # Initialize FAISS index
-    if os.path.exists(index_path):
-        index = faiss.read_index(index_path)
+    # if os.path.exists(_index_path):
+    if os.path.exists(_index_path) or os.path.exists(os.path.dirname(__file__) + "/" + _index_path):
+        index = faiss.read_index(os.path.dirname(__file__) + "/" + _index_path)
     else:
         dimension = vectors.shape[1]
         index = faiss.IndexFlatL2(dimension)  # L2 similarity
 
     # Add vectors to FAISS index
     index.add(vectors)
-    faiss.write_index(index, index_path)
+    faiss.write_index(index, _index_path)
     return len(chunks)
 
 

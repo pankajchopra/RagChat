@@ -22,19 +22,19 @@ async def websocket_endpoint(websocket: WebSocket):
             # WebSocketDisconnect is not raised unless we poll
             # https://github.com/tiangolo/fastapi/issues/3008
             try:
-                data = await asyncio.wait_for( websocket.receive_text(), 0.1)
-                await socket_connection_manager.received_message(
-                    socket=websocket, message=data)
+                data = await asyncio.wait_for(websocket.receive_text(), 0.2)
+                # await socket_connection_manager.received_message(
+                #     socket=websocket, message=data)
+                if data.startswith("audio-query:"):
+                    audio_base64 = data[len("audio-query:"):]
+                    transcript = transcribe_audio(audio_base64)
+                    llm_response = run_query_with_rag_and_then_with_gemini(transcript)
+                else:
+                    llm_response = run_query_with_rag_and_then_with_gemini(data)
+
+                await websocket.send_text(llm_response)
             except asyncio.TimeoutError:
                 pass
-            if data.startswith("audio-query:"):
-                audio_base64 = data[len("audio-query:"):]
-                transcript = transcribe_audio(audio_base64)
-                llm_response = run_query_with_rag_and_then_with_gemini(transcript)
-            else:
-                llm_response = run_query_with_rag_and_then_with_gemini(data)
-
-            await websocket.send_text(llm_response)
     except WebSocketDisconnect:
         client.close()
         await websocket.close()

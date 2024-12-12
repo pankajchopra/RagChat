@@ -5,6 +5,9 @@ import google.generativeai as genai
 
 from app.database import load_env
 from app.search.gemini_query_engine import GeminiQueryEngine
+import logging
+
+logger = logging.getLogger(__name__)
 
 index_path = "faiss_index.index"
 text_data_path = "chunks.txt"
@@ -14,13 +17,13 @@ def initialize_gemini(api_key=None, model_name=None):
     """ Initialize GeminiQueryEngine with your API key
     Replace with your Gemini Pro API key
     """
-    if((api_key is None or model_name is None)
+    if ((api_key is None or model_name is None)
             and (os.environ.get('GEMINI_API_KEY') is None or os.environ.get('GEMINI_MODEL') is None)):
         load_env()
         api_key = os.environ['GEMINI_API_KEY']
         model_name = os.environ['GEMINI_MODEL']
-    genai.configure(api_key= api_key)  # or genai.configure(api_key)
-    return genai.GenerativeModel(model_name= model_name)
+    genai.configure(api_key=api_key)  # or genai.configure(api_key)
+    return genai.GenerativeModel(model_name=model_name)
 
 
 # Load Universal Sentence Encoder
@@ -29,21 +32,28 @@ embed = hub.load("https://tfhub.dev/google/universal-sentence-encoder/4")
 
 # Function to load FAISS index
 def load_faiss_index(index_file_path):
-    if not os.path.exists(index_file_path):
+    absIndexPath = os.path.dirname(__file__) + "/" + index_file_path
+    print(absIndexPath)
+    if os.path.exists(index_file_path) or os.path.exists(absIndexPath):
+        index = faiss.read_index(absIndexPath)
+    else:
         raise FileNotFoundError(f"Index file '{index_file_path}' not found!")
-    return faiss.read_index(index_file_path)
+    return index
 
 
 # Perform a search query
-def search_faiss(query, top_k=5):
-    index = load_faiss_index(index_path)
+def search_faiss(query, _index_path, top_k=5):
+    logger.debug(f"Query: {query}")
+    index = load_faiss_index(_index_path)
 
+    logger.debug("Vectorize the query")
     # Vectorize the query
     query_vector = embed([query]).numpy()
 
     # Search the FAISS index
+    logger.debug("Search the FAISS index")
     distances, indices = index.search(query_vector, top_k)
-
+    logger.debug(f"distances{distances} and indices{indices} from the FAISS index")
     return distances[0], indices[0]
 
 
@@ -72,12 +82,15 @@ def search_faiss(query, top_k=5):
 
 # Retrieve chunks from saved text data (mock implementation)
 def get_chunk_by_index(indices):
+    absIndexPath = os.path.dirname(__file__) + "\\" + text_data_path
+    print(absIndexPath)
+
     # Simulate chunk retrieval from a text file
-    if not os.path.exists(text_data_path):
-        raise FileNotFoundError(f"Text data file '{text_data_path}' not found!")
+    if not(os.path.exists(text_data_path) or os.path.exists(absIndexPath)):
+        raise FileNotFoundError(f"Text data file {text_data_path} not found!")
 
     # Load all chunks (one per line)
-    with open(text_data_path, 'r') as file:
+    with open(absIndexPath, 'r') as file:
         chunks = file.readlines()
 
     # Return selected chunks
@@ -92,7 +105,7 @@ def perform_rag_with_gemini(query, context):
     gemini_query_engine = GeminiQueryEngine(os.environ['GEMINI_API_KEY'])
 
     system_instruction = {
-        "role": "system",
+
         "parts": [
             {
                 "text": "You are a helpful AI assistant designed to provide accurate and relevant information.\n Answer as concisely as possible in less than 256 tokens.\n".join(context)
@@ -185,8 +198,7 @@ def run_query_with_rag_and_then_with_gemini(query):
     gemini_response = perform_rag_with_gemini(query, top_chunks)
 
     print("\nGemini Pro Response:")
-    print(gemini_response)
-    return True
+    return gemini_response
 
 
 def perform_rag_search_return_top_chunks(indexPath, query, textData_path):

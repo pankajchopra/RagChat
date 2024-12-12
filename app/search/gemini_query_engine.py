@@ -25,9 +25,8 @@ class GeminiQueryEngine:
         """
         # Default system information if not provided
         default_system_info = {
-            "role": "system",
             "parts": [
-                "You are a helpful AI assistant designed to provide accurate and concise information."
+                {"text":"You are a helpful AI assistant designed to provide accurate and concise information, max_output_tokens is 2048"}
             ]
         }
 
@@ -68,22 +67,20 @@ class GeminiQueryEngine:
         payload = {
 
             "role": "user",
-            "parts": [{"text": query}],
-            "systemInstruction": system_info,
-            "generation_config": generation_config,
-            "tools": tools
+            "parts": [{"text": query}, {"text": default_system_info.get("parts")[0]['text']}, {"text": system_info.get("parts")[0]['text']}],
+            # "systemInstruction": system_info,
+            # "generation_config": generation_config,
+
         }
 
         return payload
 
     @staticmethod
-    def query_gemini(self, payload):
+    def query_gemini(payload):
         """
         Send query to Gemini 1.5 Flash model
 
         Args:
-            query (str): User's query or prompt
-
             payload (dict): Configured payload for Gemini API
 
         Returns:
