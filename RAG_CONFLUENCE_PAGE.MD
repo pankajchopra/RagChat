@@ -1,3 +1,8 @@
+https://github.com/FullStackRetrieval-com/RetrievalTutorials/blob/main/tutorials/LevelsOfTextSplitting/5_Levels_Of_Text_Splitting.ipynb
+https://github.com/deepshamenghani/chunking_strategies_langchain
+https://github.com/vmware/versatile-data-kit/blob/main/examples/chunker/10_chunk_data.py
+
+
 When chunking Confluence pages for a RAG (Retrieval Augmented Generation) system, consider strategies like content-aware chunking to split based on section headers and content types (like tables), semantic text splitting to identify natural boundaries based on meaning, agentic chunking to use an LLM to create chunks according to specific instructions, and sliding window chunking for overlapping chunks to preserve contextual continuity; always monitor performance metrics to optimize chunk size based on your specific Confluence data. 
 Key points about chunking Confluence pages for RAG:
 
