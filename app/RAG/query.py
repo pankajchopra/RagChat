@@ -2,6 +2,7 @@ import os
 import faiss
 import tensorflow_hub as hub
 import google.generativeai as genai
+from summarize_models.summarize import Summarize
 
 from app.database import load_env
 from app.search.gemini_query_engine import GeminiQueryEngine
@@ -17,11 +18,16 @@ def initialize_gemini(api_key=None, model_name=None):
     """ Initialize GeminiQueryEngine with your API key
     Replace with your Gemini Pro API key
     """
-    if ((api_key is None or model_name is None)
-            and (os.environ.get('GEMINI_API_KEY') is None or os.environ.get('GEMINI_MODEL') is None)):
+    if api_key is None and model_name is None:
         load_env()
-        api_key = os.environ['GEMINI_API_KEY']
-        model_name = os.environ['GEMINI_MODEL']
+
+    # initialise api_key if it is None
+    api_key = api_key if api_key is not None else os.environ['GEMINI_API_KEY']
+    model_name = os.environ['GEMINI_MODEL']
+    if model_name is None:
+        print("Error initializing Gemini, model name is None in the config")
+        exit()
+
     genai.configure(api_key=api_key)  # or genai.configure(api_key)
     return genai.GenerativeModel(model_name=model_name)
 
@@ -86,7 +92,7 @@ def get_chunk_by_index(indices):
     print(absIndexPath)
 
     # Simulate chunk retrieval from a text file
-    if not(os.path.exists(text_data_path) or os.path.exists(absIndexPath)):
+    if not (os.path.exists(text_data_path) or os.path.exists(absIndexPath)):
         raise FileNotFoundError(f"Text data file {text_data_path} not found!")
 
     # Load all chunks (one per line)
@@ -186,6 +192,50 @@ def run_query_simulation_with_gemini(indexPath, textData_path, geminiModel):
     return True
 
 
+def run_query_simulation_with_pegasus(indexPath, textData_path):
+    query = input("Enter your query: ").strip()
+    if not query:
+        print("Query cannot be empty.")
+        return True
+    elif query == "exit":
+        return False
+    else:
+        print("Query:", query)
+
+    top_chunks = perform_rag_search_return_top_chunks(indexPath, query, textData_path)
+
+    # Perform RAG with Gemini Pro
+    print("\nGenerating response with Google Pegasus for query and RAG context...")
+    # convert top_chunks to string
+    top_chunks_str: str = " ".join(top_chunks)
+    pegasus_response = Summarize().summarize_text_with_pegasus(top_chunks_str)
+
+    print("\nGoogle Pegasus Response:")
+    print(pegasus_response)
+    return True
+
+
+def run_query_simulation_with_bart(indexPath, textData_path):
+    query = input("Enter your query: ").strip()
+    if not query:
+        print("Query cannot be empty.")
+        return True
+    elif query == "exit":
+        return False
+    else:
+        print("Query:", query)
+
+    top_chunks = perform_rag_search_return_top_chunks(indexPath, query, textData_path)
+
+    # Perform RAG with Gemini Pro
+    print("\nGenerating response with Google Pegasus for query and RAG context...")
+    bart_response = Summarize().summarize_text_with_bart(top_chunks)
+
+    print("\nGoogle Pegasus Response:")
+    print(bart_response)
+    return True
+
+
 def run_query_with_rag_and_then_with_gemini(query):
     global index_path, text_data_path
     if not query:
@@ -224,6 +274,11 @@ if __name__ == "__main__":
         exit()
 
     model = initialize_gemini(os.environ['GEMINI_API_KEY'])
+    if model == None:
+        print("Error initializing Gemini, model is None")
+        exit()
+    Summarize = Summarize()
     continueQuery = True
     while continueQuery:
         continueQuery = run_query_simulation_with_gemini(index_path, "chunks.txt", model)
+        # continueQuery = run_query_simulation_with_pegasus(index_path, "chunks.txt")
