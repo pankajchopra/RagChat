@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from fastapi.openapi.utils import get_openapi
 from app.routers import personas, preferences, conversations
-from app import websocket
+from app import websolcket_old
 from fastapi_socketio import SocketManager
 # from app.auth import oauth2_scheme
 from app.database import load_env

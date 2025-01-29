@@ -22,3 +22,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 /.idea/
+/.ipynb_checkpoints/openai_helper-checkpoint.py
+/.ipynb_checkpoints/requirements-checkpoint.txt
+/.ipynb_checkpoints/Untitled-checkpoint.ipynb
+/.ipynb_checkpoints/untitled-checkpoint.py
+/openai_helper.py
+/Untitled.ipynb
+/untitled.py

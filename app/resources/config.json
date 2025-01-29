@@ -1,7 +1,25 @@
 
 {
+  "groq_llama": {
+    "LLAMA_MODEL_NAME": "llama-3.3-70b-versatile",
+    "LLAMA_API_KEY":"",
+    "LLAMA_MAX_TOKENS": "1024",
+    "LLAMA_TEMPERATURE": "0.7",
+    "LLAMA_TOP_P": "1",
+    "LLAMA_FREQUENCY_PENALTY": "0",
+    "LLAMA_PRESENCE_PENALTY": "0",
+    "LLAMA_API_URL": "https://api.openai.com/v1/completions"
+  },
+  "openai": {
+      "OPENAI_MODEL": "gpt-3.5-turbo",
+      "OPENAI_TEMPERATURE": "0.7",
+      "OPENAI_MAX_TOKENS": "1024",
+      "OPENAI_TOP_P": "1",
+      "OPENAI_FREQUENCY_PENALTY": "0",
+      "OPENAI_PRESENCE_PENALTY": "0",
+      "OPENAI_API_URL": "https://api.openai.com/v1/completions"
+  },
   "google": {
-     "GEMINI_API_KEY": "AIzaSyCZ6e-nfnZHktqxqDVRBmwf-C9DwMB-vJYPKC",
      "GOOGLE_APPLICATION_CREDENTIALS": "resources\\gen-lang-client-0922515850.json",
      "GEMINI_MODEL": "gemini-1.5-flash-002"
   } ,
@@ -10,7 +28,6 @@
     "type": "mongodb",
     "host": "clusterpk.nwora.mongodb.net",
     "user": "jaknap",
-    "password": "HeB2Vad9TW2czRe1",
     "database": "ragchatdb",
     "uri": "mongodb+srv://jaknap:HeB2Vad9TW2czRe1@clusterpk.nwora.mongodb.net/ragchatdb?retryWrites=true&w=majority&appName=Clusterpk"
   }

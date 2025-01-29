@@ -1,0 +1,17 @@
+{
+    "prompt": "User: How are you doing?\nAssistant:",
+    "temperature": 0.7, 
+    "top_p": 0.9,  
+    "max_tokens": 2048,  
+    "presence_penalty": 0.0,  
+    "frequency_penalty": 0.0,  
+    "stop": ["\n\n", "\n"],  
+    "context": {  
+        "system": "I am an AI assistant.",  
+        "persona": "I am a helpful and knowledgeable assistant.",  
+        "history": [  
+            {"user": "User: How are you doing?", "assistant": "Assistant: I am doing well, thank you for asking."},
+            {"user": "User: What is your purpose?", "assistant": "Assistant: My purpose is to assist users with their queries."}
+        ]
+    }
+}
